@@ -113,52 +113,46 @@ if not has_data:
         db.session.commit()
 else:
     print("skip downloading data")
-    
-tasks = [
-    {
-        'id': 1,
-        'title': u'Buy groceries',
-        'description': u'Milk, Cheese, Pizza, Fruit, Tylenol',
-        'done': False
-    },
-    {
-        'id': 2,
-        'title': u'Learn Python',
-        'description': u'Need to find a good Python tutorial on the web',
-        'done': False
-    }
-]
-
-def make_public_task(task):
-    new_task = {}
-    for field in task:
-        if field == 'id':
-            new_task['uri'] = url_for('get_task', task_id=task['id'],
-                                      _external=True)
-        else:
-            new_task[field] = task[field]
-    return new_task
 
 # test with 
-# curl -u saber:saber -i http://localhost:5000/spwx/api/v1.0/data
+# curl -u saber:saber -i "http://localhost:5000/spwx/api/v1.0/data"
 @app.route('/spwx/api/v1.0/data', methods=['GET'])
 @auth.login_required
 def get_tasks():
     #return jsonify({'tasks': [make_public_task(task) for task in tasks]})
-    #print("get request")
-    data = Data.query.get(1)
+    print("get request")
+    #print('data',data_dict)
+    try:
+        start = datetime.datetime.fromisoformat(request.args.get('start'))
+        end = datetime.datetime.fromisoformat(request.args.get('end'))
+    except Exception as e:
+        abort(400)
+    print(start, end)
+    delta  = end - start
+    print('delta in seconds',delta.seconds)
+    if delta.seconds > 3600:
+        abort(400)
+        
+    qry = db.session.query(Data).filter(Data.time_tag.between(start, end))
+    result = []
+    for row in qry:
+        row_dict = row.__dict__
+        row_dict.pop('_sa_instance_state')
+        result.append(row_dict)
+        print(row_dict)
+    return jsonify({'data': result})
+
+@app.route('/spwx/api/v1.0/data/<int:data_id>', methods=['GET'])
+@auth.login_required
+def get_task(data_id):
+    data = Data.query.get(data_id)
     data_dict = data.__dict__
     data_dict.pop('_sa_instance_state')
-    #print('data',data_dict)
     return jsonify({'data': [data_dict]})
-
-@app.route('/spwx/api/v1.0/data/<int:task_id>', methods=['GET'])
-@auth.login_required
-def get_task(task_id):
-    task = [task for task in tasks if task['id'] == task_id]
-    if len(task) == 0:
-        abort(404)
-    return jsonify({'task': make_public_task(task[0])})
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+'''
+https://stackoverflow.com/questions/9581692/recommended-date-format-for-rest-get-api
+'''
