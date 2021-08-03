@@ -28,7 +28,15 @@ def unauthorized():
 
 @app.errorhandler(400)
 def bad_request(error):
-    return make_response(jsonify({'error': 'Bad request'}), 400)
+    return make_response(jsonify({
+        'error': 'Bad request.',
+        'message':'Please enter datetime in ISO format. And have datatime range between 5 min and 1 hour',
+        'format': [
+            'http://localhost:5000/spwx/api/v1.0/data/5minavg?end=2021-08-03T00:48:00&start=2021-08-03T00:40:00',
+            'http://localhost:5000/spwx/api/v1.0/data?end=2021-08-03T00:48:00&start=2021-08-03T00:40:00',
+            'http://localhost:5000/spwx/api/v1.0/data/1'
+            ]
+        }), 400)
 
 
 @app.errorhandler(404)
@@ -195,7 +203,7 @@ def get_avgs():
     return jsonify({'data': [result]})
 
 # test with
-# curl -u saber:saber -i "http://localhost:5000/spwx/api/v1.0/data?end=2021-08-03T00:48:00&start=2021-08-03T00:40:00"
+# curl -u saber:saber -i "http://localhost:5000/spwx/api/v1.0/data/5minavg?end=2021-08-03T00:48:00&start=2021-08-03T00:40:00"
 @app.route('/spwx/api/v1.0/data', methods=['GET'])
 @auth.login_required
 def get_data():
