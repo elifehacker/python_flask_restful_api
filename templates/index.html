@@ -1,0 +1,22 @@
+{% extends 'base.html'%}
+
+{% block head %}
+<title>Home title</title>
+{% endblock %}
+
+{% block body %}
+<h1>HOME PAGE</h1>
+<table>
+    {% for key in tick_data.keys() %}
+       <tr>
+            <th> {{ key }} </th>
+            <td> {{ tick_data[key] }} </td>
+       </tr>
+    {% endfor %}
+</table>
+<pre>
+    <code class="prettyprint">
+        {{ tick_hist }}
+    </code>
+</pre>
+{% endblock %}

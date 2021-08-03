@@ -1,10 +1,12 @@
 #!flask/bin/python
-from flask import Flask, jsonify, abort, request, make_response, url_for
+from flask import Flask, jsonify, abort, request, make_response, url_for, render_template
 from flask_httpauth import HTTPBasicAuth
 import urllib.request, json 
 from flask_sqlalchemy import SQLAlchemy
 import datetime
 import pandas as pd   
+import yfinance as yf
+
 
 app = Flask(__name__, static_url_path="")
 auth = HTTPBasicAuth()
@@ -138,22 +140,22 @@ else:
 @app.route('/spwx/api/v1.0/data/5minavg', methods=['GET'])
 @auth.login_required
 def get_avgs():
-    print("get request")
+    #print("get request")
     try:
         start = datetime.datetime.fromisoformat(request.args.get('start'))
         end = datetime.datetime.fromisoformat(request.args.get('end'))
     except Exception as e:
         abort(400)
-    print(start, end)
+    #print(start, end)
     delta  = end - start
-    print('delta in seconds',delta.seconds)
+    #print('delta in seconds',delta.seconds)
     if delta.seconds > 3600 or delta.seconds < 300:
         abort(400)
 
     sources = db.session.execute('select distinct source from data')
     result = []
     for s in sources:
-        print('sources',s[0])
+        #print('sources',s[0])
 
         qry = db.session.query(Data).filter(
             Data.time_tag.between(start, end),
@@ -162,7 +164,7 @@ def get_avgs():
         q_dict = qry[0].__dict__
         q_dict.pop('_sa_instance_state')
         ks = list(q_dict.keys())
-        print('ks',ks)
+        #print('ks',ks)
         df = pd.DataFrame(columns=list(ks))
         for row in qry:
             row_dict = row.__dict__
@@ -185,8 +187,8 @@ def get_avgs():
         "theta_gsm":34.18,
         "phi_gsm":328.65,
         '''
-        print('df head print')
-        print(df.head())
+        #print('df head print')
+        #print(df.head())
         df['bt_5min_avg'] = df['bt'].rolling(5).mean()
         df['bx_gse_5min_avg'] = df['bx_gse'].rolling(5).mean()
         df['by_gse_5min_avg'] = df['by_gse'].rolling(5).mean()
@@ -207,22 +209,22 @@ def get_avgs():
 @app.route('/spwx/api/v1.0/data', methods=['GET'])
 @auth.login_required
 def get_data():
-    print("get request")
+    #print("get request")
     try:
         start = datetime.datetime.fromisoformat(request.args.get('start'))
         end = datetime.datetime.fromisoformat(request.args.get('end'))
     except Exception as e:
         abort(400)
-    print(start, end)
+    #print(start, end)
     delta  = end - start
-    print('delta in seconds',delta.seconds)
+    #print('delta in seconds',delta.seconds)
     if delta.seconds > 3600:
         abort(400)
 
     sources = db.session.execute('select distinct source from data')
     result = []
     for s in sources:
-        print('sources',s[0])
+        #print('sources',s[0])
 
         qry = db.session.query(Data).filter(
             Data.time_tag.between(start, end),
@@ -243,6 +245,20 @@ def get_data_id(data_id):
     data_dict = data.__dict__
     data_dict.pop('_sa_instance_state')
     return jsonify({'data': [data_dict]})
+
+
+# test with
+# http://localhost:5000/msft/5d
+@app.route('/<string:tick_req>/<string:period_req>', methods=['GET'])
+def index(tick_req, period_req):
+    tick = yf.Ticker(tick_req)
+
+    # get stock info
+    #print(tick.info)
+
+    # get historical market data
+    hist = tick.history(period=period_req)
+    return render_template('index.html', tick_data = tick.info, tick_hist = hist)
 
 if __name__ == '__main__':
     app.run(debug=True)
