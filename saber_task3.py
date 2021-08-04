@@ -1,6 +1,6 @@
 #!flask/bin/python
 from flask import Flask, jsonify, abort, request, make_response, url_for, render_template,redirect,flash
-from flask_login import current_user, login_user, LoginManager, UserMixin, login_required
+from flask_login import current_user, login_user, logout_user, LoginManager, UserMixin, login_required
 from flask_httpauth import HTTPBasicAuth
 import urllib.request, json 
 from flask_sqlalchemy import SQLAlchemy
@@ -248,14 +248,19 @@ def get_data_id(data_id):
 @login_required
 def ticks(tick_req, period_req):
     tick = yf.Ticker(tick_req)
-
-    # get stock info
-    #print(tick.info)
-
-    # get historical market data
     hist = tick.history(period=period_req)
-    return render_template('ticks.html', tick_data = tick.info, tick_hist = hist)
+    return render_template('ticks.html', tick_data = tick.info, tick_hist = hist.to_html(), xvals = '50,60,70,90', yvals='6,7,7,9')
 
+
+# test with
+# curl -u saber:saber -i "http://localhost:5000/ticks/api/v1.0/msft/5d"
+@app.route('/ticks/api/v1.0/<string:tick_req>/<string:period_req>', methods=['GET'])
+@auth.login_required
+def ticks_api(tick_req, period_req):
+    tick = yf.Ticker(tick_req)
+    hist = tick.history(period=period_req)
+    print(hist, type(hist))
+    return hist.to_json()
 
 @login.user_loader
 def load_user(id = 0):
@@ -277,6 +282,11 @@ def login():
         else:
             flash('Invalid username or password')
     return render_template('login.html', title='Sign In', form=form)
+
+@app.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('index'))
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -6,11 +6,8 @@
 
 {% block body %}
 <h1>Ticks Page</h1>
-<pre>
-    <code class="prettyprint">
-        {{ tick_hist }}
-    </code>
-</pre>
+{{ tick_hist | safe }}
+<canvas id="myChart" style="width:100%;max-width:600px"></canvas>
 <table>
     {% for key in tick_data.keys() %}
        <tr>
