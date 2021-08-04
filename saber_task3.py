@@ -18,62 +18,6 @@ db = SQLAlchemy(app)
 login = LoginManager(app)
 app.config['SECRET_KEY'] = 'saber'
 
-@auth.get_password
-def get_password(username):
-    if username == 'saber':
-        return 'saber'
-    return None
-
-
-@auth.error_handler
-def unauthorized():
-    # return 403 instead of 401 to prevent browsers from displaying the default
-    # auth dialog
-    return make_response(jsonify({'error': 'Unauthorized access'}), 403)
-
-
-@app.errorhandler(400)
-def bad_request(error):
-    return make_response(jsonify({
-        'error': 'Bad request.',
-        'message':'Please enter datetime in ISO format. And have datatime range between 5 min and 1 hour',
-        'format': [
-            'http://localhost:5000/spwx/api/v1.0/data/5minavg?end=2021-08-03T00:48:00&start=2021-08-03T00:40:00',
-            'http://localhost:5000/spwx/api/v1.0/data?end=2021-08-03T00:48:00&start=2021-08-03T00:40:00',
-            'http://localhost:5000/spwx/api/v1.0/data/1'
-            ]
-        }), 400)
-
-
-@app.errorhandler(404)
-def not_found(error):
-    return make_response(jsonify({'error': 'Not found'}), 404)
-
-'''
-[{
-    "time_tag":"2021-08-02T06:40:00",
-    "active":false,
-    "source":"ACE",
-    "range":null,
-    "scale":4,
-    "sensitivity":0.002,
-    "manual_mode":false,
-    "sample_size":60,
-    "bt":2.97,
-    "bx_gse":2.11,
-    "by_gse":-1.77,
-    "bz_gse":1.12,
-    "theta_gse":22.17,
-    "phi_gse":320.01,
-    "bx_gsm":2.10,
-    "by_gsm":-1.28,
-    "bz_gsm":1.67,
-    "theta_gsm":34.18,
-    "phi_gsm":328.65,
-    "max_telemetry_flag":0,
-    "max_data_flag":0,
-    "overall_quality":0}
-'''
 
 class Data(db.Model):
     id = db.Column(db.Integer, primary_key = True)
@@ -100,8 +44,22 @@ class Data(db.Model):
     max_data_flag = db.Column(db.Integer, nullable=False)
     overall_quality = db.Column(db.Integer, nullable=False)
 
-db.create_all()
 
+class LoginForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired()])
+    password = PasswordField('Password', validators=[DataRequired()])
+    remember_me = BooleanField('Remember Me')
+    submit = SubmitField('Sign In')
+
+
+class User(UserMixin):
+    id = 0
+    username = 'saber'
+    password = 'saber'
+
+
+user = User()
+db.create_all()
 has_data = Data.query.get(1)
 if not has_data:
     print("downloading data and putting them into a sqlite database")
@@ -138,6 +96,39 @@ if not has_data:
         db.session.commit()
 else:
     print("skip downloading and processing data")
+
+
+@auth.get_password
+def get_password(username):
+    if username == 'saber':
+        return 'saber'
+    return None
+
+
+@auth.error_handler
+def unauthorized():
+    # return 403 instead of 401 to prevent browsers from displaying the default
+    # auth dialog
+    return make_response(jsonify({'error': 'Unauthorized access'}), 403)
+
+
+@app.errorhandler(400)
+def bad_request(error):
+    return make_response(jsonify({
+        'error': 'Bad request.',
+        'message':'Please enter datetime in ISO format. And have datatime range between 5 min and 1 hour',
+        'format': [
+            'http://localhost:5000/spwx/api/v1.0/data/5minavg?end=2021-08-03T00:48:00&start=2021-08-03T00:40:00',
+            'http://localhost:5000/spwx/api/v1.0/data?end=2021-08-03T00:48:00&start=2021-08-03T00:40:00',
+            'http://localhost:5000/spwx/api/v1.0/data/1'
+            ]
+        }), 400)
+
+
+@app.errorhandler(404)
+def not_found(error):
+    return make_response(jsonify({'error': 'Not found'}), 404)
+
 
 # test with 
 # curl -u saber:saber -i "http://localhost:5000/spwx/api/v1.0/data/5minavg?end=2021-08-03T00:48:00&start=2021-08-03T00:40:00"
@@ -265,17 +256,6 @@ def ticks(tick_req, period_req):
     hist = tick.history(period=period_req)
     return render_template('ticks.html', tick_data = tick.info, tick_hist = hist)
 
-class LoginForm(FlaskForm):
-    username = StringField('Username', validators=[DataRequired()])
-    password = PasswordField('Password', validators=[DataRequired()])
-    remember_me = BooleanField('Remember Me')
-    submit = SubmitField('Sign In')
-
-class User(UserMixin):
-    id = 0
-    username = 'saber'
-    password = 'saber'
-user = User()
 
 @login.user_loader
 def load_user(id = 0):
