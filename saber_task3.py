@@ -1,18 +1,22 @@
 #!flask/bin/python
-from flask import Flask, jsonify, abort, request, make_response, url_for, render_template
+from flask import Flask, jsonify, abort, request, make_response, url_for, render_template,redirect,flash
+from flask_login import current_user, login_user, LoginManager, UserMixin, login_required
 from flask_httpauth import HTTPBasicAuth
 import urllib.request, json 
 from flask_sqlalchemy import SQLAlchemy
 import datetime
 import pandas as pd   
 import yfinance as yf
-
+from flask_wtf import FlaskForm
+from wtforms import StringField, PasswordField, BooleanField, SubmitField
+from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
 
 app = Flask(__name__, static_url_path="")
 auth = HTTPBasicAuth()
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///swpc.db'
 db = SQLAlchemy(app)
-
+login = LoginManager(app)
+app.config['SECRET_KEY'] = 'saber'
 
 @auth.get_password
 def get_password(username):
@@ -250,7 +254,8 @@ def get_data_id(data_id):
 # test with
 # http://localhost:5000/msft/5d
 @app.route('/<string:tick_req>/<string:period_req>', methods=['GET'])
-def index(tick_req, period_req):
+@login_required
+def ticks(tick_req, period_req):
     tick = yf.Ticker(tick_req)
 
     # get stock info
@@ -258,7 +263,40 @@ def index(tick_req, period_req):
 
     # get historical market data
     hist = tick.history(period=period_req)
-    return render_template('index.html', tick_data = tick.info, tick_hist = hist)
+    return render_template('ticks.html', tick_data = tick.info, tick_hist = hist)
+
+class LoginForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired()])
+    password = PasswordField('Password', validators=[DataRequired()])
+    remember_me = BooleanField('Remember Me')
+    submit = SubmitField('Sign In')
+
+class User(UserMixin):
+    id = 0
+    username = 'saber'
+    password = 'saber'
+user = User()
+
+@login.user_loader
+def load_user(id = 0):
+    return user
+
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    return render_template('index.html')
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    form = LoginForm()
+    if form.validate_on_submit():
+        if form.username.data == user.username and form.password.data == user.password:
+            login_user(user, remember=form.remember_me.data)
+            return redirect(url_for('index'))
+        else:
+            flash('Invalid username or password')
+    return render_template('login.html', title='Sign In', form=form)
 
 if __name__ == '__main__':
     app.run(debug=True)
@@ -266,4 +304,5 @@ if __name__ == '__main__':
 '''
 https://blog.miguelgrinberg.com/post/designing-a-restful-api-with-python-and-flask
 https://stackoverflow.com/questions/9581692/recommended-date-format-for-rest-get-api
+https://towardsdatascience.com/free-stock-data-for-python-using-yahoo-finance-api-9dafd96cad2e
 '''

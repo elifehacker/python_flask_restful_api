@@ -1,0 +1,23 @@
+{% extends 'base.html'%}
+
+{% block head %}
+<title>Ticks Page</title>
+{% endblock %}
+
+{% block body %}
+<h1>Ticks Page</h1>
+<pre>
+    <code class="prettyprint">
+        {{ tick_hist }}
+    </code>
+</pre>
+<table>
+    {% for key in tick_data.keys() %}
+       <tr>
+            <th> {{ key }} </th>
+            <td> {{ tick_data[key] }} </td>
+       </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}
