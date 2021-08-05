@@ -140,6 +140,8 @@ def get_avg_from_db(start, end):
             Data.time_tag.between(start, end),
             Data.source == s[0]
             )
+        if len(qry.all()) == 0:
+            abort(404)
         q_dict = qry[0].__dict__
         q_dict.pop('_sa_instance_state')
         ks = list(q_dict.keys())
@@ -254,7 +256,7 @@ def get_data_id(data_id):
 @app.route('/spwx/5minavg', methods=['GET'])
 @login_required
 def get_5min_avg():
-    print("get request")
+    #print("get request")
     start, end = check_start_end_range(request)
     print(start, end)
     result = get_avg_from_db(start, end)
