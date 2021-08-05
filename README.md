@@ -1,5 +1,10 @@
 # python_flask_restful_api
 
+Please find screenshot of each page in the directory below for a quick look. 
+```
+https://github.com/elifehacker/python_flask_restful_api/tree/master/screenshots
+```
+
 ## task 1
 This is a simple python application.
 
