@@ -1,15 +1,15 @@
 #!flask/bin/python
 from flask import Flask, jsonify, abort, request, make_response, url_for, render_template,redirect,flash
-from flask_login import current_user, login_user, logout_user, LoginManager, UserMixin, login_required
 from flask_httpauth import HTTPBasicAuth
-import urllib.request, json 
+from flask_login import current_user, login_user, logout_user, LoginManager, UserMixin, login_required
 from flask_sqlalchemy import SQLAlchemy
-import datetime
-import pandas as pd   
-import yfinance as yf
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
-from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
+from wtforms.validators import DataRequired
+import datetime
+import pandas as pd   
+import urllib.request, json 
+import yfinance as yf
 
 app = Flask(__name__, static_url_path="")
 auth = HTTPBasicAuth()
