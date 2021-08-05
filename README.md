@@ -59,7 +59,7 @@ curl -u saber:saber -i "http://localhost:5000/ticks/api/v1.0/msft/5d"
 ```
 
 ## task 5
-charts could be see in these pages
+charts could be seen in these pages
 ```
 http://localhost:5000/ticks/msft/5d
 http://localhost:5000/spwx/5minavg?end=2021-08-03T00:48:00&start=2021-08-03T00:40:00
