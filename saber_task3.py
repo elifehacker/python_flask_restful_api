@@ -130,23 +130,7 @@ def not_found(error):
     return make_response(jsonify({'error': 'Not found'}), 404)
 
 
-# test with 
-# curl -u saber:saber -i "http://localhost:5000/spwx/api/v1.0/data/5minavg?end=2021-08-03T00:48:00&start=2021-08-03T00:40:00"
-@app.route('/spwx/api/v1.0/data/5minavg', methods=['GET'])
-@auth.login_required
-def get_avgs():
-    #print("get request")
-    try:
-        start = datetime.datetime.fromisoformat(request.args.get('start'))
-        end = datetime.datetime.fromisoformat(request.args.get('end'))
-    except Exception as e:
-        abort(400)
-    #print(start, end)
-    delta  = end - start
-    #print('delta in seconds',delta.seconds)
-    if delta.seconds > 3600 or delta.seconds < 300:
-        abort(400)
-
+def get_avg_from_db(start, end):
     sources = db.session.execute('select distinct source from data')
     result = []
     for s in sources:
@@ -197,6 +181,29 @@ def get_avgs():
         df['phi_gsm_5min_avg'] = df['phi_gsm'].rolling(5).mean()
         df = df.iloc[5::5, :]
         result.append(df.to_dict())
+    return result
+
+def check_start_end_range(request):
+    try:
+        start = datetime.datetime.fromisoformat(request.args.get('start'))
+        end = datetime.datetime.fromisoformat(request.args.get('end'))
+    except Exception as e:
+        abort(400)
+    #print(start, end)
+    delta  = end - start
+    #print('delta in seconds',delta.seconds)
+    if delta.seconds > 3600 or delta.seconds < 300:
+        abort(400)
+    return start, end
+
+# test with 
+# curl -u saber:saber -i "http://localhost:5000/spwx/api/v1.0/data/5minavg?end=2021-08-03T00:48:00&start=2021-08-03T00:40:00"
+@app.route('/spwx/api/v1.0/data/5minavg', methods=['GET'])
+@auth.login_required
+def get_avgs():
+    #print("get request")
+    start, end = check_start_end_range(request)
+    result = get_avg_from_db(start, end)
     return jsonify({'data': [result]})
 
 # test with
@@ -243,13 +250,32 @@ def get_data_id(data_id):
 
 
 # test with
-# http://localhost:5000/msft/5d
-@app.route('/<string:tick_req>/<string:period_req>', methods=['GET'])
+# http://localhost:5000/spwx/5minavg?end=2021-08-03T00:48:00&start=2021-08-03T00:40:00
+@app.route('/spwx/5minavg', methods=['GET'])
+@login_required
+def get_5min_avg():
+    print("get request")
+    start, end = check_start_end_range(request)
+    print(start, end)
+    result = get_avg_from_db(start, end)
+    #print(result)
+    return render_template('spwx.html', spwx_data = result, spwx_data2 = result)
+
+# test with
+# http://localhost:5000/ticks/msft/5d
+@app.route('/ticks/<string:tick_req>/<string:period_req>', methods=['GET'])
 @login_required
 def ticks(tick_req, period_req):
     tick = yf.Ticker(tick_req)
     hist = tick.history(period=period_req)
-    return render_template('ticks.html', tick_data = tick.info, tick_hist = hist.to_html(), xvals = '50,60,70,90', yvals='6,7,7,9')
+    yvals = hist['Close']
+    yvals = ','.join(str(x) for x in yvals)
+    xvals = hist.index
+    xvals = ','.join(str(x.isoformat()) for x in xvals)
+    print(yvals)
+    print(xvals)
+
+    return render_template('ticks.html', tick_data = tick.info, tick_hist = hist.to_html(), xvals = xvals, yvals=yvals)
 
 
 # test with

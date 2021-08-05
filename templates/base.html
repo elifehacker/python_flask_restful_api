@@ -27,30 +27,9 @@
 <body>
     <button onclick="myFunction()">Toggle dark mode</button>
     <br>
-    {% block body %} {% endblock %}
-    <script xv={{ xvals }} yv={{ yvals }} >
-        var xValues = document.currentScript.getAttribute('xv').split(",");
-        var yValues = document.currentScript.getAttribute('yv').split(",");
     
-        new Chart("myChart", {
-        type: "line",
-        data: {
-            labels: xValues,
-            datasets: [{
-            fill: false,
-            lineTension: 0,
-            backgroundColor: "rgba(0,0,255,1.0)",
-            borderColor: "rgba(0,0,255,0.1)",
-            data: yValues
-            }]
-        },
-        options: {
-            legend: {display: false},
-            scales: {
-            yAxes: [{ticks: {min: 6, max:16}}],
-            }
-        }
-        });
+    {% block body %} {% endblock %}
+    <script>
         function myFunction() {
             var element = document.body;
             element.classList.toggle("dark-mode");
