@@ -209,7 +209,7 @@ def get_avgs():
     return jsonify({'data': [result]})
 
 # test with
-# curl -u saber:saber -i "http://localhost:5000/spwx/api/v1.0/data/5minavg?end=2021-08-03T00:48:00&start=2021-08-03T00:40:00"
+# curl -u saber:saber -i "http://localhost:5000/spwx/api/v1.0/data?start=2021-08-03T00:40:00&end=2021-08-03T00:48:00"
 @app.route('/spwx/api/v1.0/data', methods=['GET'])
 @auth.login_required
 def get_data():
