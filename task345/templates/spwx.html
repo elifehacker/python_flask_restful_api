@@ -10,63 +10,62 @@
     <canvas id="myChart{{ loop.index }}" style="width:100%;max-width:600px"></canvas>
 {% endfor %}
 
-    <script>
-        function getAvgs(data_set, key_value) {
-            let xvalues = Object.keys(data_set[key_value]).map(function(key){
-                return data_set[key_value][key];
-            });
-            return xvalues
-        }
-        const parsedData = JSON.parse('{{ spwx_data2|tojson }}');
-        let xValues = [[1,0],[3,7]];
-        let c = 1;
-        console.log('parsed', parsedData)
-        for (let index in parsedData){
-            data_set = parsedData[index]
-            console.log(data_set)
-            new Chart("myChart".concat(c), {
-            type: "line",
-            data: {
-                labels: getAvgs(data_set, 'time_tag'),
-                datasets: [
-                    {
-                        label: "bt_5min_avg",
-                        data: getAvgs(data_set, 'bt_5min_avg'),
-                        borderColor: "red",
-                        fill: false
-                    },{
-                        label: 'theta_gse_5min_avg',
-                        data: getAvgs(data_set, 'theta_gse_5min_avg'),
-                        borderColor: "green",
-                        fill: false
-                    },{
-                        label: 'phi_gse_5min_avg',
-                        data: getAvgs(data_set, 'phi_gse_5min_avg'),
-                        borderColor: "blue",
-                        fill: false
-                    },{
-                        label: 'theta_gsm_5min_avg',
-                        data: getAvgs(data_set, 'theta_gsm_5min_avg'),
-                        borderColor: "yellow",
-                        fill: false
-                    },{
-                        label: 'phi_gsm_5min_avg',
-                        data: getAvgs(data_set, 'phi_gsm_5min_avg'),
-                        borderColor: "purple",
-                        fill: false
-                    }
-                ]
+<script>
+    function getAvgs(data_set, key_value) {
+        let xvalues = Object.keys(data_set[key_value]).map(function(key){
+            return data_set[key_value][key];
+        });
+        return xvalues
+    }
+    const parsedData = JSON.parse('{{ spwx_data2|tojson }}');
+    let c = 1;
+    console.log('parsed', parsedData)
+    for (let index in parsedData){
+        data_set = parsedData[index]
+        console.log(data_set)
+        new Chart("myChart".concat(c), {
+        type: "line",
+        data: {
+            labels: getAvgs(data_set, 'time_tag'),
+            datasets: [
+                {
+                    label: "bt_5min_avg",
+                    data: getAvgs(data_set, 'bt_5min_avg'),
+                    borderColor: "red",
+                    fill: false
+                },{
+                    label: 'theta_gse_5min_avg',
+                    data: getAvgs(data_set, 'theta_gse_5min_avg'),
+                    borderColor: "green",
+                    fill: false
+                },{
+                    label: 'phi_gse_5min_avg',
+                    data: getAvgs(data_set, 'phi_gse_5min_avg'),
+                    borderColor: "blue",
+                    fill: false
+                },{
+                    label: 'theta_gsm_5min_avg',
+                    data: getAvgs(data_set, 'theta_gsm_5min_avg'),
+                    borderColor: "yellow",
+                    fill: false
+                },{
+                    label: 'phi_gsm_5min_avg',
+                    data: getAvgs(data_set, 'phi_gsm_5min_avg'),
+                    borderColor: "purple",
+                    fill: false
+                }
+            ]
+        },
+        options: {
+            title:{
+                display: true,
+                text: data_set['source']['5']
             },
-            options: {
-                title:{
-                    display: true,
-                    text: data_set['source']['5']
-                },
-                legend: {display: true}
-            }
-            });
-            c+=1;
+            legend: {display: true}
         }
-    </script>
+        });
+        c+=1;
+    }
+</script>
 
 {% endblock %}
