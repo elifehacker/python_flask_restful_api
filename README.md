@@ -12,6 +12,11 @@ This is a simple python application.
 The visualization was done with dataframe and matplotlib in a python notebook
 
 ## task 3
+To install libraries and run the app:
+```
+(myenv) F:\workspace\saber\task345>pip install -r requirements.txt
+(myenv) F:\workspace\saber\task345>python saber_task3.py 
+```
 There is below logic to facilitate the development. To download the latest data, simply remove the swpc.db file under /task345 and restart the application.
 ```
 has_data = Data.query.get(1)
