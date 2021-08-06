@@ -324,4 +324,5 @@ https://blog.miguelgrinberg.com/post/designing-a-restful-api-with-python-and-fla
 https://stackoverflow.com/questions/9581692/recommended-date-format-for-rest-get-api
 https://towardsdatascience.com/free-stock-data-for-python-using-yahoo-finance-api-9dafd96cad2e
 https://www.chartjs.org/samples/2.6.0/
+https://stackoverflow.com/questions/42805765/how-to-add-a-loading-gif-to-the-page-when-a-function-runs-in-the-background-in-f
 '''
