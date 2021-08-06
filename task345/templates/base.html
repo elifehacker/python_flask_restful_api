@@ -36,24 +36,28 @@
                 <a class="nav-link active" aria-current="page" href="/">Home</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="/ticks/msft/5d" onclick="$('#loading').show();">Ticks example (require login)</a>
+                <a class="nav-link" href="/ticks/msft/5d" onclick="$('#loading').show();$('#content').hide();">Ticks example (require login)</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="/spwx/5minavg?end=2021-08-03T00:48:00&start=2021-08-03T00:20:00" onclick="$('#loading').show();">SPWX data example (require login)</a>
+                <a class="nav-link" href="/spwx/5minavg?end=2021-08-03T00:48:00&start=2021-08-03T00:20:00" onclick="$('#loading').show();$('#content').hide();">SPWX data example (require login)</a>
               </li>
             </ul>
           </div>
         </div>
       </nav>
     <br>
-    <div id="loading" style="display:none;"><img src="{{url_for('static', filename='loadingimage.gif')}}" alt="" />Loading!</div>
-    <div class="container">
+    <div id="loading" style="display:none;">
+      <img src="{{url_for('static', filename='loadingimage.gif')}}" alt="" />Loading!
+    </div>
+    <div id="content">
+      <div class="container">
         <button onclick="myFunction()">Toggle dark mode</button>
         <br>
         {% block body %} {% endblock %}
+      </div>
     </div>
     <div class="container-fluid">
-        <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top bg-dark" width:100>
+      <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top bg-dark" width:100>
           <div class="col-md-4 d-flex align-items-center">
             <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
               <li class="ms-3"><a class="social-media-link" href="https://www.facebook.com/SaberAstronautics/" rel="noopener noreferrer" target="_blank" aria-label="Access Saber Astronautic's Facebook page"><div class="Footerstyled__SocialMedia-rc1ymi-5 ciKtFV"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 320 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M279.14 288l14.22-92.66h-88.91v-60.13c0-25.35 12.42-50.06 52.24-50.06h40.42V6.26S260.43 0 225.36 0c-73.22 0-121.08 44.38-121.08 124.72v70.62H22.89V288h81.39v224h100.17V288z"></path></svg></div></a></li>
@@ -70,16 +74,16 @@
                   </picture>
                 </div>
               </a>
-            <div>2021 © SABER ASTRONAUTICS<br>ALL RIGHTS RESERVED.</div>
+            <div>2021 © SABER ASTRONAUTICS<br>ALL RIGHTS RESERVED.
+            </div>
           </div>
-        </div>
-
         <div>
           <a href="/privacypolicy/">Privacy Policy</a>
           <a href="/termsofuse/">Terms of Use</a>
         </div>
-        </footer>
-      </div>
+      </footer>
+    </div>
+
     <script>
         function myFunction() {
             var element = document.body;
