@@ -2,38 +2,88 @@
 <html lang="en">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
     
-<head>
+<head class="p-3 bg-dark text-white">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
     <style>
         body {
-            padding: 25px;
-            background-color: white;
-            color: black;
-            font-size: 25px;
-        }
-        .dark-mode {
             background-color: black;
             color: white;
         }
-
+        .dark-mode {
+            background-color: white;
+            color: black;
+        }
     </style>
     {% block head %} {% endblock %}
 </head>
 
 <body>
-    <button onclick="myFunction()">Toggle dark mode</button>
+    <nav class="navbar navbar-dark bg-dark" aria-label="First navbar example">
+        <div class="container-fluid">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample01" aria-controls="navbarsExample01" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          
+          <img src="{{url_for('static', filename='saberlogo.png')}}" style="height: 60px; padding: 1rem 0px;" align="middle" />
+          <a class="navbar-brand" href="#"></a>
+          <div class="collapse navbar-collapse" id="navbarsExample01">
+            <ul class="navbar-nav me-auto mb-2">
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="/">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/ticks/msft/5d">Ticks example (require login)</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/spwx/5minavg?end=2021-08-03T00:48:00&start=2021-08-03T00:20:00">SPWX data example (require login)</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
     <br>
-    
-    {% block body %} {% endblock %}
+    <div class="container">
+        <button onclick="myFunction()">Toggle dark mode</button>
+        <br>
+        {% block body %} {% endblock %}
+    </div>
+    <div class="container-fluid">
+        <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top bg-dark" width:100>
+          <div class="col-md-4 d-flex align-items-center">
+            <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
+              <li class="ms-3"><a class="social-media-link" href="https://www.facebook.com/SaberAstronautics/" rel="noopener noreferrer" target="_blank" aria-label="Access Saber Astronautic's Facebook page"><div class="Footerstyled__SocialMedia-rc1ymi-5 ciKtFV"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 320 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M279.14 288l14.22-92.66h-88.91v-60.13c0-25.35 12.42-50.06 52.24-50.06h40.42V6.26S260.43 0 225.36 0c-73.22 0-121.08 44.38-121.08 124.72v70.62H22.89V288h81.39v224h100.17V288z"></path></svg></div></a></li>
+              <li class="ms-3"><a class="social-media-link" href="https://twitter.com/SaberAstro" rel="noopener noreferrer" target="_blank" aria-label="Access Saber Astronautic's Twitter page"><div class="Footerstyled__SocialMedia-rc1ymi-5 ciKtFV"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"></path></svg></div></a></li>
+              <li class="ms-3"><a class="social-media-link" href="https://www.linkedin.com/company/saberastro" rel="noopener noreferrer" target="_blank" aria-label="Access Saber Astronautic's Linkedin page"><div class="Footerstyled__SocialMedia-rc1ymi-5 ciKtFV"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 448 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M100.28 448H7.4V148.9h92.88zM53.79 108.1C24.09 108.1 0 83.5 0 53.8a53.79 53.79 0 0 1 107.58 0c0 29.7-24.1 54.3-53.79 54.3zM447.9 448h-92.68V302.4c0-34.7-.7-79.2-48.29-79.2-48.29 0-55.69 37.7-55.69 76.7V448h-92.78V148.9h89.08v40.8h1.3c12.4-23.5 42.69-48.3 87.88-48.3 94 0 111.28 61.9 111.28 142.3V448z"></path></svg></div></a></li>
+            </ul>
+          </div>
+          <div class="nav col-md-4 list-unstyled d-flex">
+            <div>
+              <a href="/">
+                <div>
+                  <picture>
+                    <img width="206" height="64" data-main-image="" sizes="(min-width: 206px) 206px, 100vw" decoding="async" src="{{url_for('static', filename='footlogo.webp')}}" srcset="{{url_for('static', filename='footlogo.webp')}}" alt="Saber Astronautics Logo" style="object-fit: cover; opacity: 1;">
+                  </picture>
+                </div>
+              </a>
+            <div>2021 © SABER ASTRONAUTICS<br>ALL RIGHTS RESERVED.</div>
+          </div>
+        </div>
+
+        <div>
+          <a href="/privacypolicy/">Privacy Policy</a>
+          <a href="/termsofuse/">Terms of Use</a>
+        </div>
+        </footer>
+      </div>
     <script>
         function myFunction() {
             var element = document.body;
             element.classList.toggle("dark-mode");
         }
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous"></script>
 </body>
 </html>
