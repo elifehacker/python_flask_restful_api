@@ -8,7 +8,7 @@ https://github.com/elifehacker/python_flask_restful_api/tree/master/screenshots
 ## task 1
 This is a simple python application.
 
-## task2
+## task 2
 The visualization was done with dataframe and matplotlib in a python notebook
 
 ## task 3
@@ -17,7 +17,7 @@ To install libraries and run the app:
 (myenv) F:\workspace\saber\task345>pip install -r requirements.txt
 (myenv) F:\workspace\saber\task345>python saber_task3.py 
 ```
-There is below logic to facilitate the development. To download the latest data, simply remove the swpc.db file under /task345 and restart the application.
+There is below logic to facilitate the development. To download the latest data, simply remove the swpc.db file under /task345 and restart the application. If you would ask what would I do to automate this process, I would use airflow to call another api in this app which triggers the download every now and then. New entries could be added to the database.
 ```
 has_data = Data.query.get(1)
 if not has_data:
